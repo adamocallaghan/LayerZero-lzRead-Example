@@ -3,7 +3,9 @@ pragma solidity ^0.8.20;
 
 import {Script, console2} from "forge-std/Script.sol";
 import {MyOAppRead} from "../src/MyOAppRead.sol";
+import {TokenMock} from "../src/TokenMock.sol";
 import {NFTMock} from "../src/NFTMock.sol";
+import {VaultMock} from "../src/VaultMock.sol";
 
 contract DeployToArbitrum is Script {
     function run() external {
@@ -31,6 +33,14 @@ contract DeployToArbitrum is Script {
         MyOAppRead arbOapp =
             new MyOAppRead{salt: "xyz"}(vm.envAddress(ARBITRUM_LZ_ENDPOINT), vm.envAddress(DEPLOYER_PUBLIC_ADDRESS));
         console2.log("MyOAppRead OAPP Address: ", address(arbOapp));
+
+        // deploy TOKEN
+        TokenMock arbToken = new TokenMock{salt: "xyz"}();
+        console2.log("Token Address: ", address(arbToken));
+
+        // deploy VAULT
+        VaultMock arbVault = new VaultMock{salt: "xyz"}(arbToken, "vaultToken", "vTKN");
+        console2.log("Vault Address: ", address(arbVault));
 
         // deploy NFT
         NFTMock arbNft = new NFTMock{salt: "xyz"}();

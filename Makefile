@@ -47,3 +47,7 @@ send-composed-call:
 
 check-token-count-on-arb:
 	cast call $(OFT_ADDRESS) "balanceOf(address)(uint256)" $(DEPLOYER_PUBLIC_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC)
+
+# === TESTING envBytes32 CHEATCODE ===
+check-oapp-bytes32-address:
+	forge script script/envBytes32.s.sol:envBytes32
