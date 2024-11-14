@@ -20,12 +20,26 @@ deploy-contracts-to-arbitrum:
 set-peers:
 	forge script script/SetPeers.s.sol:SetPeers --broadcast --account deployer -vvvvv
 
-# ===================
-# === DEPOSIT ETH ===
-# ===================
+# ==========================================================
+# === GET OUR ACCOUNTS SOME NFTs AND VAULT SHARES ON ARB ===
+# ==========================================================
 
-deposit-eth-on-base:
-	cast send $(OAPP_ADDRESS) --rpc-url $(BASE_SEPOLIA_RPC) "supply()" --value 0.01ether --account deployer
+bob---mint-nft-on-arb:
+	cast send $(OAPP_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC) "mint()" --account bob
+
+bob---mint-5000-tokens-on-arb:
+	cast send $(OAPP_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC) "mint(address,uint256)" $(BOB_PUBLIC_ADDRESS) 5000 --account bob
+
+bob---deposit-tokens-to-vault-on-arb:
+	cast send $(OAPP_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC) "_deposit(uint256)" 5000 --account bob
+
+# for demo purposes Jane posesses no NFT on Arb
+
+jane---mint-10000-tokens-on-arb:
+	cast send $(OAPP_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC) "mint(address,uint256)" $(JANE_PUBLIC_ADDRESS) 10000 --account jane
+
+jane---deposit-tokens-to-vault-on-arb:
+	cast send $(OAPP_ADDRESS) --rpc-url $(ARBITRUM_SEPOLIA_RPC) "_deposit(uint256)" 10000 --account jane
 
 # =====================================
 # === SEND TO ARB for COMPOSED CALL ===
