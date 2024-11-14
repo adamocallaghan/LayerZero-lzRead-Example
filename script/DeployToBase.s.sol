@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import {Script, console2} from "lib/forge-std/src/Script.sol";
 import {MyOAppRead} from "../src/MyOAppRead.sol";
 
-contract SetPeers is Script {
+contract DeployToBase is Script {
     function run() external {
         // ===================
         // === SCRIPT VARS ===
@@ -18,17 +18,20 @@ contract SetPeers is Script {
         // === BASE DEPLOYMENTS ===
         // ========================
 
-        console2.log("###########################################");
-        console2.log("########## Deploying to Arbitrum ##########");
-        console2.log("###########################################");
+        console2.log("#######################################");
+        console2.log("########## Deploying to Base ##########");
+        console2.log("#######################################");
 
-        vm.createSelectFork("arbitrum");
+        vm.createSelectFork("base");
 
         vm.startBroadcast(deployerPrivateKey);
 
         // deploy OAPP
-        MyOAppRead baseOapp =
-            new MyOAppRead{salt: "xyz"}(vm.envAddress(BASE_LZ_ENDPOINT), vm.envAddress(DEPLOYER_PUBLIC_ADDRESS));
+        MyOAppRead baseOapp = new MyOAppRead{salt: "elephant"}(
+            vm.envAddress(BASE_LZ_ENDPOINT), // lzEndpoint
+            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS), // delegate
+            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
+        );
         console2.log("MyOAppRead OAPP Address: ", address(baseOapp));
 
         vm.stopBroadcast();

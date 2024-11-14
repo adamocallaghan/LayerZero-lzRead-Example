@@ -14,7 +14,9 @@ contract MyOAppRead is OAppRead {
 
     /// @param _endpoint The address of the LayerZero endpoint.
     /// @param _delegate The address of the delegate contract.
-    constructor(address _endpoint, address _delegate) OAppRead(_endpoint, _delegate) {}
+    constructor(address _endpoint, address _delegate, address _owner) OAppRead(_endpoint, _delegate) {
+        transferOwnership(_owner);
+    }
 
     /// @notice Internal function to handle incoming messages and read responses.
     /// @dev Filters messages based on `srcEid` to determine the type of incoming data.

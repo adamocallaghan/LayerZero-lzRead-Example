@@ -30,20 +30,23 @@ contract DeployToArbitrum is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // deploy OAPP
-        MyOAppRead arbOapp =
-            new MyOAppRead{salt: "xyz"}(vm.envAddress(ARBITRUM_LZ_ENDPOINT), vm.envAddress(DEPLOYER_PUBLIC_ADDRESS));
+        MyOAppRead arbOapp = new MyOAppRead{salt: "elephant"}(
+            vm.envAddress(ARBITRUM_LZ_ENDPOINT), // lzEndpoint
+            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS), // delegate
+            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
+        );
         console2.log("MyOAppRead OAPP Address: ", address(arbOapp));
 
         // deploy TOKEN
-        TokenMock arbToken = new TokenMock{salt: "xyz"}();
+        TokenMock arbToken = new TokenMock{salt: "elephant"}();
         console2.log("Token Address: ", address(arbToken));
 
         // deploy VAULT
-        VaultMock arbVault = new VaultMock{salt: "xyz"}(arbToken, "vaultToken", "vTKN");
+        VaultMock arbVault = new VaultMock{salt: "elephant"}(arbToken, "vaultToken", "vTKN");
         console2.log("Vault Address: ", address(arbVault));
 
         // deploy NFT
-        NFTMock arbNft = new NFTMock{salt: "xyz"}();
+        NFTMock arbNft = new NFTMock{salt: "elephant"}();
         console2.log("NFT Address: ", address(arbNft));
 
         vm.stopBroadcast();
