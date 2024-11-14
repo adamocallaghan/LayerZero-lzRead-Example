@@ -4,15 +4,6 @@ pragma solidity ^0.8.20;
 import {Script, console2} from "lib/forge-std/src/Script.sol";
 import {MyOAppRead} from "../src/MyOAppRead.sol";
 
-interface IVault {
-    function setPeer(uint32, bytes32) external;
-    function setToken(address) external;
-}
-
-interface IToken {
-    function setPeer(uint32, bytes32) external;
-}
-
 contract SetPeers is Script {
     function run() external {
         // ===================
