@@ -25,6 +25,10 @@ contract SetPeers is Script {
         uint256 baseLzEndIdUint = vm.envUint("BASE_SEPOLIA_LZ_ENDPOINT_ID");
         uint32 BASE_SEPOLIA_LZ_ENDPOINT_ID = uint32(baseLzEndIdUint);
 
+        // === BASE LZ-ENDPOINT ===
+        uint256 baseLzEndpoint = vm.envUint("BASE_SEPOLIA_LZ_ENDPOINT");
+        uint32 BASE_SEPOLIA_LZ_ENDPOINT = uint32(baseLzEndpoint);
+
         // === ARBIRTUM ===
         uint256 arbLzEndIdUint = vm.envUint("ARBITRUM_SEPOLIA_LZ_ENDPOINT_ID");
         uint32 ARBITRUM_SEPOLIA_LZ_ENDPOINT_ID = uint32(arbLzEndIdUint);
@@ -64,6 +68,34 @@ contract SetPeers is Script {
 
         // OAPP Wire-Ups
         IMyOAppRead(OAPP_ADDRESS).setPeer(BASE_SEPOLIA_LZ_ENDPOINT_ID, OAPP_BYTES32);
+
+        vm.stopBroadcast();
+
+        // ========================
+        // === SET READ LIBRARY ===
+        // ========================
+
+        // Initialize the endpoint contract
+        ILayerZeroEndpointV2 endpoint = ILayerZeroEndpointV2(BASE_SEPOLIA_LZ_ENDPOINT);
+        address _readLib = 0x54320b901FDe49Ba98de821Ccf374BA4358a8bf6;
+
+        vm.createSelectFork("base");
+
+        // Start broadcasting transactions
+        vm.startBroadcast(deployerPrivateKey);
+
+        // Set the send library
+        endpoint.setSendLibrary(OAPP_ADDRESS, BASE_SEPOLIA_LZ_ENDPOINT_ID, _readLib);
+        console.log("Send library set to Read Lib.");
+
+        // Set the receive library
+        endpoint.setReceiveLibrary(OAPP_ADDRESS, BASE_SEPOLIA_LZ_ENDPOINT_ID, _readLib);
+        console.log("Receive library set to Read Lib.");
+
+        // Set the config
+
+        // Set the channelId
+        OAPP_ADDRESS.setReadChannel(4294967294, true);
 
         vm.stopBroadcast();
     }

@@ -45,6 +45,9 @@ contract MyOAppRead is OAppRead {
         payable
         returns (MessagingReceipt memory receipt)
     {
+        bytes memory extraOptions =
+            OptionsBuilder.newOptions().addExecutorNativeDropOption(nativeDropGas, addressToBytes32(user));
+
         bytes memory cmd = getCmd();
         return _lzSend(
             READ_CHANNEL,
@@ -166,5 +169,9 @@ contract MyOAppRead is OAppRead {
         bytes calldata /* _extraData */
     ) internal virtual {
         // Implement read handling logic here.
+    }
+
+    function setReadChannel(uint32 _channelId, bool _active) public virtual onlyOwner {
+        _setPeer(_channelId, _active ? AddressCast.toBytes32(address(this)) : bytes32(0));
     }
 }
