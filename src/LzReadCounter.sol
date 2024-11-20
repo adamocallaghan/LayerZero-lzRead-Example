@@ -44,8 +44,9 @@ contract LzReadCounter is OAppRead, IOAppComputer {
     uint32 public immutable eid;
     uint256 public count;
 
-    constructor(address _endpoint) OAppRead(_endpoint, msg.sender) {
+    constructor(address _endpoint, address _owner) OAppRead(_endpoint, _owner) {
         eid = ILayerZeroEndpointV2(_endpoint).eid();
+        transferOwnership(_owner);
     }
 
     // -------------------------------

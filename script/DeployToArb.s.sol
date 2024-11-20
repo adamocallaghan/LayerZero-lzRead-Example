@@ -37,21 +37,22 @@ contract DeployToArbitrum is Script {
         // vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
 
         // deploy OAPP
-        LzReadCounter arbOapp = new LzReadCounter{salt: "elephant"}(
-            vm.envAddress(ARBITRUM_LZ_ENDPOINT) // lzEndpoint
+        LzReadCounter arbOapp = new LzReadCounter{salt: "goat"}(
+            vm.envAddress(ARBITRUM_LZ_ENDPOINT), // lzEndpoint
+            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
         );
         console2.log("LzReadCounter OAPP Address: ", address(arbOapp));
 
         // deploy TOKEN
-        TokenMock arbToken = new TokenMock{salt: "elephant"}();
+        TokenMock arbToken = new TokenMock{salt: "goat"}();
         console2.log("Token Address: ", address(arbToken));
 
         // deploy VAULT
-        VaultMock arbVault = new VaultMock{salt: "elephant"}(arbToken, "vaultToken", "vTKN");
+        VaultMock arbVault = new VaultMock{salt: "goat"}(arbToken, "vaultToken", "vTKN");
         console2.log("Vault Address: ", address(arbVault));
 
         // deploy NFT
-        NFTMock arbNft = new NFTMock{salt: "elephant"}();
+        NFTMock arbNft = new NFTMock{salt: "goat"}();
         console2.log("NFT Address: ", address(arbNft));
 
         vm.stopBroadcast();

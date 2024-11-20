@@ -15,10 +15,16 @@ deploy-contracts-to-arbitrum:
 # === SET PEERS ===
 # =================
 
-# NOTE: before running set-peers make sure you have changed the *hardcoded* OAPP_BYTES32 and OFT_BYTES32 in the SetPeers.s.sol file
-
 set-peers:
-	forge script script/SetPeers.s.sol:SetPeers --broadcast --account deployer -vvvvv
+	forge script script/SetPeers.s.sol:SetPeers --broadcast --account deployer -vvvvv --via-ir
+
+manually-set-send-lib:
+	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setSendLibrary(address,uint32,address)" $(OAPP_ADDRESS) $(BASE_TO_ARB_CHANNEL_ID) 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2 --rpc-url $(BASE_SEPOLIA_RPC) --account deployer
+
+manually-set-receive-lib:
+	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setReceiveLibrary(address,uint32,address,uint256)" $(OAPP_ADDRESS) $(BASE_TO_ARB_CHANNEL_ID) 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2 --rpc-url $(BASE_SEPOLIA_RPC) 0 --account deployer
+
+manually-set-read-channel:
 
 # ==========================================================
 # === GET OUR ACCOUNTS SOME NFTs AND VAULT SHARES ON ARB ===

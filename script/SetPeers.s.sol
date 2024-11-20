@@ -41,6 +41,9 @@ contract SetPeers is Script {
         uint256 arbLzEndIdUint = vm.envUint("ARBITRUM_SEPOLIA_LZ_ENDPOINT_ID");
         uint32 ARBITRUM_SEPOLIA_LZ_ENDPOINT_ID = uint32(arbLzEndIdUint);
 
+        uint256 baseToArbChannelId = vm.envUint("BASE_TO_ARB_CHANNEL_ID");
+        uint32 BASE_TO_ARB_CHANNEL_ID = uint32(baseToArbChannelId);
+
         // ====================
         // === BASE WIRE-UP ===
         // ====================
@@ -85,7 +88,11 @@ contract SetPeers is Script {
 
         // Initialize the endpoint contract
         ILayerZeroEndpointV2 endpoint = ILayerZeroEndpointV2(baseLzEndpoint);
-        address _readLib = 0x54320b901FDe49Ba98de821Ccf374BA4358a8bf6;
+        // address _sendLib = 0x54320b901FDe49Ba98de821Ccf374BA4358a8bf6; // arb -> base
+        address _readLib = 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2; // base -> arb
+
+        // address _baseSendLib = 0xC1868e054425D378095A003EcbA3823a5D0135C9;
+        // address _baseReceiveLib = 0x12523de19dc41c91F7d2093E0CFbB76b17012C8d;
 
         vm.createSelectFork("base");
 
@@ -93,18 +100,18 @@ contract SetPeers is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // Set the send library
-        endpoint.setSendLibrary(OAPP_ADDRESS, BASE_SEPOLIA_LZ_ENDPOINT_ID, _readLib);
+        endpoint.setSendLibrary(OAPP_ADDRESS, BASE_TO_ARB_CHANNEL_ID, _readLib);
         console2.log("Send library set to Read Lib.");
 
         // Set the receive library
-        endpoint.setReceiveLibrary(OAPP_ADDRESS, BASE_SEPOLIA_LZ_ENDPOINT_ID, _readLib, 0);
+        endpoint.setReceiveLibrary(OAPP_ADDRESS, BASE_TO_ARB_CHANNEL_ID, _readLib, 0);
         console2.log("Receive library set to Read Lib.");
 
         // Set the config
         // endpoint.setConfig();
 
         // Set the channelId
-        OAppRead(OAPP_ADDRESS).setReadChannel(4294967294, true);
+        OAppRead(OAPP_ADDRESS).setReadChannel(BASE_TO_ARB_CHANNEL_ID, true);
 
         vm.stopBroadcast();
     }
