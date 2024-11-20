@@ -14,7 +14,7 @@ import {
     EVMCallRequestV1
 } from "lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/libs/ReadCmdCodecV1.sol";
 import {IOAppComputer} from
-    "/home/adam/layers/lz-read/lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/interfaces/IOAppComputer.sol";
+    "lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/interfaces/IOAppComputer.sol";
 
 import {OAppRead} from "@layerzerolabs/oapp-evm/contracts/oapp/OAppRead.sol";
 

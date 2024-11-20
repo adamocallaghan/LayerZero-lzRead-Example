@@ -2,7 +2,8 @@
 pragma solidity ^0.8.20;
 
 import {Script, console2} from "lib/forge-std/src/Script.sol";
-import {MyOAppRead} from "../src/MyOAppRead.sol";
+// import {MyOAppRead} from "../src/MyOAppRead.sol";
+import {LzReadCounter} from "../src/LzReadCounter.sol";
 
 contract DeployToBase is Script {
     function run() external {
@@ -27,12 +28,10 @@ contract DeployToBase is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // deploy OAPP
-        MyOAppRead baseOapp = new MyOAppRead{salt: "elephant"}(
-            vm.envAddress(BASE_LZ_ENDPOINT), // lzEndpoint
-            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS), // delegate
-            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
+        LzReadCounter baseOapp = new LzReadCounter{salt: "elephant"}(
+            vm.envAddress(BASE_LZ_ENDPOINT) // lzEndpoint
         );
-        console2.log("MyOAppRead OAPP Address: ", address(baseOapp));
+        console2.log("LzReadCounter OAPP Address: ", address(baseOapp));
 
         vm.stopBroadcast();
     }

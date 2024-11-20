@@ -2,7 +2,9 @@
 pragma solidity ^0.8.20;
 
 import {Script, console2} from "forge-std/Script.sol";
-import {MyOAppRead} from "../src/MyOAppRead.sol";
+// import {MyOAppRead} from "../src/MyOAppRead.sol";
+import {LzReadCounter} from "../src/LzReadCounter.sol";
+
 import {TokenMock} from "../src/TokenMock.sol";
 import {NFTMock} from "../src/NFTMock.sol";
 import {VaultMock} from "../src/VaultMock.sol";
@@ -29,13 +31,16 @@ contract DeployToArbitrum is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
+        // OLD OAPP PARAMS
+        // vm.envAddress(ARBITRUM_LZ_ENDPOINT), // lzEndpoint
+        // vm.envAddress(DEPLOYER_PUBLIC_ADDRESS), // delegate
+        // vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
+
         // deploy OAPP
-        MyOAppRead arbOapp = new MyOAppRead{salt: "elephant"}(
-            vm.envAddress(ARBITRUM_LZ_ENDPOINT), // lzEndpoint
-            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS), // delegate
-            vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
+        LzReadCounter arbOapp = new LzReadCounter{salt: "elephant"}(
+            vm.envAddress(ARBITRUM_LZ_ENDPOINT) // lzEndpoint
         );
-        console2.log("MyOAppRead OAPP Address: ", address(arbOapp));
+        console2.log("LzReadCounter OAPP Address: ", address(arbOapp));
 
         // deploy TOKEN
         TokenMock arbToken = new TokenMock{salt: "elephant"}();
