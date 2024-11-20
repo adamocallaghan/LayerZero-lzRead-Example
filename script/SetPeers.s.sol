@@ -3,6 +3,12 @@ pragma solidity ^0.8.20;
 
 import {Script, console2} from "forge-std/Script.sol";
 import {MyOAppRead} from "../src/MyOAppRead.sol";
+import {
+    ILayerZeroEndpointV2,
+    MessagingFee,
+    MessagingReceipt,
+    Origin
+} from "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol";
 
 interface IMyOAppRead {
     function setPeer(uint32, bytes32) external;
@@ -93,6 +99,7 @@ contract SetPeers is Script {
         console.log("Receive library set to Read Lib.");
 
         // Set the config
+        // endpoint.setConfig();
 
         // Set the channelId
         OAPP_ADDRESS.setReadChannel(4294967294, true);

@@ -16,6 +16,7 @@ import {
 } from "lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/libs/ReadCmdCodecV1.sol";
 import {OptionsBuilder} from "lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/libs/OptionsBuilder.sol";
 import {
+    OAppOptionsType3,
     IOAppOptionsType3,
     EnforcedOptionParam
 } from "lib/layerzero-v2/packages/layerzero-v2/evm/oapp/contracts/oapp/libs/OAppOptionsType3.sol";
@@ -28,6 +29,8 @@ contract MyOAppRead is OAppRead {
     /// `eid > 4294965694` (which is `type(uint32).max - 1600`).
     uint32 constant READ_CHANNEL_EID_THRESHOLD = 4294965694;
     uint32 constant READ_CHANNEL = 4294967295; // the Read Data Path Channel ID for both Base Sepolia & Arb Sepolia
+
+    uint32[] public targetEids = [40231];
 
     /// @param _endpoint The address of the LayerZero endpoint.
     /// @param _delegate The address of the delegate contract.
@@ -45,17 +48,10 @@ contract MyOAppRead is OAppRead {
         payable
         returns (MessagingReceipt memory receipt)
     {
-        bytes memory extraOptions =
-            OptionsBuilder.newOptions().addExecutorNativeDropOption(nativeDropGas, addressToBytes32(user));
+        bytes memory options = OptionsBuilder.newOptions().addExecutorLzReadOption(100_000, 64, 0);
 
         bytes memory cmd = getCmd();
-        return _lzSend(
-            READ_CHANNEL,
-            cmd,
-            combineOptions(READ_CHANNEL, READ_MSG_TYPE, _extraOptions),
-            MessagingFee(msg.value, 0),
-            payable(msg.sender)
-        );
+        return _lzSend(READ_CHANNEL, cmd, options, MessagingFee(msg.value, 0), payable(msg.sender));
     }
 
     /**
