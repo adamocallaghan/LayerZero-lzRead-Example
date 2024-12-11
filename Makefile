@@ -25,6 +25,7 @@ manually-set-receive-lib:
 	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setReceiveLibrary(address,uint32,address,uint256)" $(OAPP_ADDRESS) $(BASE_TO_ARB_CHANNEL_ID) 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2 --rpc-url $(BASE_SEPOLIA_RPC) 0 --account deployer
 
 manually-set-read-channel:
+	cast send $(OAPP_ADDRESS) "setReadChannel(uint32,bool)" $(BASE_TO_ARB_CHANNEL_ID) true --rpc-url $(BASE_SEPOLIA_RPC)  --account deployer
 
 # ==========================================================
 # === GET OUR ACCOUNTS SOME NFTs AND VAULT SHARES ON ARB ===
