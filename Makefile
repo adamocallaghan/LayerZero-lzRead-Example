@@ -25,7 +25,13 @@ manually-set-receive-lib:
 	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setReceiveLibrary(address,uint32,address,uint256)" $(OAPP_ADDRESS) $(BASE_TO_ARB_CHANNEL_ID) 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2 --rpc-url $(BASE_SEPOLIA_RPC) 0 --account deployer
 
 manually-set-read-channel:
-	cast send $(OAPP_ADDRESS) "setReadChannel(uint32,bool)" $(BASE_TO_ARB_CHANNEL_ID) true --rpc-url $(BASE_SEPOLIA_RPC)  --account deployer
+	cast send $(OAPP_ADDRESS) "setReadChannel(uint32,bool)" $(BASE_TO_ARB_CHANNEL_ID) true --rpc-url $(BASE_SEPOLIA_RPC) --account deployer
+
+manually-set-config:
+	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setConfig((uint32,bytes32,uint256,uint256,bytes,bytes,bytes),(uint,uint),address)" "(40109,$(MUMBAI_BYTES32_PEER),10000000000000000000,10000000000000000000,0x,0x,0x)" "(10000000000000000,0)" $(PUBLIC_ADDRESS) --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --value 0.01ether
+
+set-config:
+	cast send $(BASE_SEPOLIA_LZ_ENDPOINT) "setConfig(address,address,(uint32,uint32,(uint32,address)),(uint32,uint32,(uint64,uint8,uint8,uint8,address[],address[])))" 0x63F7F67bcCc1064B86238d83d764CAbCaaED2916 0x29270F0CFC54432181C853Cd25E2Fb60A68E03f2 "(4294967295,2,(10000,0x8A3D588D9f6AC041476b094f97FF94ec30169d3D))" "(4294967295,2,(15,1,0,0,[0xbf6FF58f60606EdB2F190769B951D825BCb214E2],[]))" --rpc-url $(BASE_SEPOLIA_RPC) --account deployer
 
 # ==========================================================
 # === GET OUR ACCOUNTS SOME NFTs AND VAULT SHARES ON ARB ===

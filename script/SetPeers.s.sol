@@ -11,6 +11,11 @@ import {
     Origin
 } from "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/ILayerZeroEndpointV2.sol";
 import {OAppRead} from "@layerzerolabs/oapp-evm/contracts/oapp/OAppRead.sol";
+// import {SendConfig} from "./SendConfig.s.sol";
+// import {ReceiveConfig} from "./ReceiveConfig.s.sol";
+import {SetConfigParam} from "@layerzerolabs/lz-evm-protocol-v2/contracts/interfaces/IMessageLibManager.sol";
+import {ExecutorConfig} from "@layerzerolabs/lz-evm-messagelib-v2/contracts/SendLibBase.sol";
+import {UlnConfig} from "@layerzerolabs/lz-evm-messagelib-v2/contracts/uln/UlnBase.sol";
 
 interface IMyOAppRead {
     function setPeer(uint32, bytes32) external;
@@ -28,6 +33,7 @@ contract SetPeers is Script {
         bytes32 OAPP_BYTES32 = vm.envBytes32("OAPP_BYTES32");
         // Oapp Address (same address all chains)
         address OAPP_ADDRESS = vm.envAddress("OAPP_ADDRESS");
+        // address DEPLOYER_PUBLIC_ADDRESS = vm.envAddress("DEPLOYER_PUBLIC_ADDRESS");
 
         // === BASE ===
         uint256 baseLzEndIdUint = vm.envUint("BASE_SEPOLIA_LZ_ENDPOINT_ID");
@@ -99,16 +105,112 @@ contract SetPeers is Script {
         // Start broadcasting transactions
         vm.startBroadcast(deployerPrivateKey);
 
-        // Set the send library
+        // // Set the send library *as the READLIB*
         endpoint.setSendLibrary(OAPP_ADDRESS, BASE_TO_ARB_CHANNEL_ID, _readLib);
         console2.log("Send library set to Read Lib.");
 
-        // Set the receive library
+        // // Set the receive library *as the READLIB*
         endpoint.setReceiveLibrary(OAPP_ADDRESS, BASE_TO_ARB_CHANNEL_ID, _readLib, 0);
         console2.log("Receive library set to Read Lib.");
 
-        // Set the config
-        // endpoint.setConfig();
+        vm.stopBroadcast();
+
+        // LzReadCounter contractAddress;   *** NOT REQUIRED: user OAPP_ADDRESS
+        // uint32 remoteEid;                *** NOT REQUIRED: use ARBITRUM_SEPOLIA_LZ_ENDPOINT_ID
+        // address sendLibraryAddress;      *** NOT REQUIRED: use _readLib
+        // address signer;                  *** NOT REQUIRED: user DEPLOYER_ADDRESS (CHECK THIS?)
+
+        // =======================
+        // === SET SEND CONFIG ===
+        // =======================
+
+        // uint64 confirmations = 15;
+        // uint8 requiredDVNCount = 1;
+        // uint8 optionalDVNCount = 0;
+        // uint8 optionalDVNThreshold = 0;
+        address[] memory _requiredDVNs = new address[](1);
+        address[] memory _optionalDVNs = new address[](0);
+
+        _requiredDVNs[0] = 0xbf6FF58f60606EdB2F190769B951D825BCb214E2;
+
+        UlnConfig memory ulnConfig;
+        ulnConfig.confirmations = 50;
+        ulnConfig.requiredDVNCount = 1;
+        ulnConfig.optionalDVNCount = 0;
+        ulnConfig.optionalDVNThreshold = 0;
+        ulnConfig.requiredDVNs = _requiredDVNs;
+        ulnConfig.optionalDVNs = _optionalDVNs;
+
+        uint32 maxMessageSize = 100000;
+        address executor = 0x8A3D588D9f6AC041476b094f97FF94ec30169d3D;
+
+        ExecutorConfig memory executorConfig;
+
+        executorConfig.maxMessageSize = maxMessageSize;
+        executorConfig.executor = executor;
+
+        uint32 EXECUTOR_CONFIG_TYPE = 1;
+        uint32 ULN_CONFIG_TYPE = 2;
+
+        SetConfigParam[] memory setSendConfigParams = new SetConfigParam[](2);
+
+        setSendConfigParams[0] = SetConfigParam({
+            eid: BASE_TO_ARB_CHANNEL_ID,
+            configType: EXECUTOR_CONFIG_TYPE,
+            config: abi.encode(executorConfig)
+        });
+
+        setSendConfigParams[1] =
+            SetConfigParam({eid: BASE_TO_ARB_CHANNEL_ID, configType: ULN_CONFIG_TYPE, config: abi.encode(ulnConfig)});
+
+        console2.log("#########################################");
+        console2.log("########## Setting SEND Config ##########");
+        console2.log("#########################################");
+        console2.log("                                            ");
+        console2.log("Setting Send Config, setConfig() on: ", OAPP_ADDRESS);
+        console2.log("Read Lib: ", _readLib);
+        console2.log("ulnConfig.confirmations: ", ulnConfig.confirmations);
+        console2.log("ulnConfig.requiredDVNCount: ", ulnConfig.requiredDVNCount);
+        console2.log("ulnConfig.optionalDVNCount: ", ulnConfig.optionalDVNCount);
+        console2.log("ulnConfig.optionalDVNThreshold: ", ulnConfig.optionalDVNThreshold);
+        console2.log("ulnConfig.requiredDVNs: ", ulnConfig.requiredDVNs[0]);
+        // console2.log("ulnConfig.optionalDVNs: ", ulnConfig.optionalDVNs[0]);
+        console2.log("executorConfig.maxMessageSize: ", executorConfig.maxMessageSize);
+        console2.log("executorConfig.executor: ", executorConfig.executor);
+
+        // Start broadcasting transactions
+        vm.startBroadcast(deployerPrivateKey);
+
+        endpoint.setConfig(address(OAPP_ADDRESS), _readLib, setSendConfigParams);
+
+        vm.stopBroadcast();
+
+        // ==========================
+        // === SET RECEIVE CONFIG ===
+        // ==========================
+
+        uint32 RECEIVE_CONFIG_TYPE = 2;
+
+        SetConfigParam[] memory setReceiveConfigParams = new SetConfigParam[](1);
+
+        setReceiveConfigParams[0] = SetConfigParam({
+            eid: BASE_TO_ARB_CHANNEL_ID,
+            configType: RECEIVE_CONFIG_TYPE,
+            config: abi.encode(ulnConfig)
+        });
+
+        vm.startBroadcast(deployerPrivateKey);
+
+        endpoint.setConfig(address(OAPP_ADDRESS), _readLib, setReceiveConfigParams);
+
+        vm.stopBroadcast();
+
+        // ========================
+        // === SET READ CHANNEL ===
+        // ========================
+
+        // Start broadcasting transactions
+        vm.startBroadcast(deployerPrivateKey);
 
         // Set the channelId
         OAppRead(OAPP_ADDRESS).setReadChannel(BASE_TO_ARB_CHANNEL_ID, true);

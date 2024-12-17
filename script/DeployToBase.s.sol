@@ -28,7 +28,7 @@ contract DeployToBase is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         // deploy OAPP
-        LzReadCounter baseOapp = new LzReadCounter{salt: "goat"}(
+        LzReadCounter baseOapp = new LzReadCounter{salt: "werewolf"}(
             vm.envAddress(BASE_LZ_ENDPOINT), // lzEndpoint
             vm.envAddress(DEPLOYER_PUBLIC_ADDRESS) // owner
         );
